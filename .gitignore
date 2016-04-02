@@ -1,0 +1,12 @@
+npm-debug.log*
+node_modules
+.DS_Store
+.idea
+*.log
+.nyc_output
+/config.json
+/coverage
+/web/*
+!/web/.gitkeep
+/logs/*
+!/logs/.gitkeep

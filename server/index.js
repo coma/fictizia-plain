@@ -1,7 +1,7 @@
 const express = require('express'),
       http    = require('http'),
       html    = require('./html'),
-      config  = require('../config.json');
+      config  = require('../config');
 
 const app    = express(),
       server = http.Server(app);

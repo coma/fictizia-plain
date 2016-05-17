@@ -6,7 +6,7 @@ const path              = require('path'),
       ExtractTextPlugin = require('extract-text-webpack-plugin'),
       Forever           = require('forever-monitor').Monitor,
       browser           = require('openurl'),
-      config            = require('../config.json');
+      config            = require('../config');
 
 const BUNDLE = 'app.js',
       SRC    = path.join(process.cwd(), 'src'),

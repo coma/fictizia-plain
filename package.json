@@ -25,7 +25,7 @@
         "webpack-dev-server": "^1.14.1"
     },
     "scripts"        : {
-        "postinstall": "node prompt",
+        "postinstall": "if [ -z \"$NODE_ENV\" ] ; then node config/prompt ; else npm run build ; fi",
         "dev"        : "node webpack/dev",
         "build"      : "node webpack/build",
         "start"      : "node server"

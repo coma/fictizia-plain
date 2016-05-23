@@ -1,0 +1,8 @@
+<h1>{{ repository.name }}</h1>
+<div>{{ repository.description }}</div>
+<h2>Contributors</h2>
+<ul>
+	<li ng-repeat="contributor in contributors track by contributor.id">
+		<a ui-sref="main.app.user.one(contributor)">{{ contributor.login }}</a>
+	</li>
+</ul>

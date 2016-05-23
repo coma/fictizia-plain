@@ -1,0 +1,21 @@
+<h1>Repositories</h1>
+<table>
+	<thead>
+		<tr>
+			<th class="l-left">Name</th>
+			<th class="l-left">Owner</th>
+			<th class="l-right">Stars</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="item in repository.list track by item.id">
+			<td>{{ item.name }}</td>
+			<td>{{ item.owner.login }}</td>
+			<td class="l-right">{{ item.stargazers_count | number }}</td>
+			<td class="l-right">
+				<a ui-sref="^.one({owner: item.owner.login, name: item.name})">view</a>
+			</td>
+		</tr>
+	</tbody>
+</table>

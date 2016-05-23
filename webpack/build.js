@@ -10,6 +10,9 @@ const BUNDLE = 'app.js',
 
 const CONFIG = {
     entry  : SRC,
+    resolve: {
+        root: process.cwd()
+    },
     output : {
         path      : WEB,
         filename  : BUNDLE,

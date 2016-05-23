@@ -16,6 +16,9 @@ const BUNDLE = 'app.js',
 
 const compiler = webpack({
     devtool: 'eval-source-map',
+    resolve: {
+        root: process.cwd()
+    },
     entry  : [
         'webpack-dev-server/client',
         SRC

@@ -1,6 +1,8 @@
 import template from './template.html';
+import style from './style.css';
 
 export default {
-	url: '/login',
+	abstract: true,
+	url     : '',
 	template
 };

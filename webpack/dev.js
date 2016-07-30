@@ -1,85 +1,71 @@
 'use strict';
 
-const path              = require('path'),
-      webpack           = require('webpack'),
-      webpackDevServer  = require('webpack-dev-server'),
-      ExtractTextPlugin = require('extract-text-webpack-plugin'),
-      Forever           = require('forever-monitor').Monitor,
-      browser           = require('openurl'),
-      config            = require('../config');
+const webpack = require('webpack'),
+      Server  = require('webpack-dev-server'),
+      browser = require('openurl'),
+      config  = require('../config'),
+      dir     = require('./dir');
 
-const BUNDLE = 'app.js',
-      SRC    = path.join(process.cwd(), 'src'),
-      WEB    = path.join(process.cwd(), 'web'),
-      LOGS   = path.join(process.cwd(), 'logs'),
-      SERVER = path.join(process.cwd(), 'server');
+const {PORT, PROXY_PORT} = config;
 
 const compiler = webpack({
-    devtool: 'eval-source-map',
+    devtool: 'cheap-module-eval-source-map',
     entry  : [
         'webpack-dev-server/client',
-        SRC
+        //'webpack/hot/only-dev-server',
+        dir.src
     ],
+    resolve: {
+        modules: [dir.cwd, dir.deps]
+    },
     output : {
-        path      : WEB,
-        filename  : BUNDLE,
+        path      : dir.web,
+        filename  : 'app.js',
         publicPath: '/'
     },
     plugins: [
-        new ExtractTextPlugin('app.css'),
-        new webpack.optimize.OccurenceOrderPlugin(),
-        new webpack.NoErrorsPlugin(),
-        new webpack.DefinePlugin({
-            'process.env': {
-                SERVER: JSON.stringify('dev')
-            }
-        })
+      //new webpack.HotModuleReplacementPlugin(),
+      new webpack.NoErrorsPlugin()
     ],
     module : {
         loaders: [
             {
-                test   : /\.js$/,
-                loader : 'babel',
-                include: SRC
-            },
-            {
                 test   : /\.html$/,
-                loader : 'html',
-                include: SRC
+                loader : 'html'
             },
             {
                 test   : /\.css$/,
-                loader : ExtractTextPlugin.extract('style-loader', 'css-loader')
+                loader : 'style-loader!css-loader'
+            },
+            {
+                test   : /\.json/,
+                loader : 'json-loader'
             }
         ]
     }
 });
 
-const backend = new Forever(SERVER, {
-    silent : true,
-    outFile: path.join(LOGS, 'out.log'),
-    errFile: path.join(LOGS, 'error.log'),
-    pidFile: path.join(LOGS, 'pid')
-});
+let first = true;
 
-const server = new webpackDevServer(compiler, {
-    proxy : {
-        '*': 'http://localhost:' + config.proxyPort
-    },
-    stats : {
-        colors: true
-    },
-    inline: true
-});
+compiler.plugin('done', () => {if (first) {
 
-backend.on('start', () => browser.open('http://localhost:' + config.port));
+    browser.open(`http://localhost:${ PORT }`);
+    first = false;
+}});
 
-compiler.plugin('done', stats => {
-
-    if (!backend.running && stats.compilation.errors.length < 1) {
-
-        backend.start();
+new Server(compiler, {
+    contentBase       : dir.web,
+    publicPath        : '/',
+    //hot               : true,
+    historyApiFallback: true,
+    proxy             : {
+        '/api': {
+            target      : 'https://api.github.com',
+            changeOrigin: true,
+            ws          : true,
+            pathRewrite : {
+                '^/api': '/'
+            }
+        }
     }
-});
-
-server.listen(config.port);
+}).listen(PORT, () => console.log(`Server on port ${ PORT }`));

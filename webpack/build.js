@@ -1,53 +1,52 @@
 'use strict';
 
-const path              = require('path'),
-      webpack           = require('webpack'),
-      ExtractTextPlugin = require('extract-text-webpack-plugin');
+const webpack           = require('webpack'),
+      ExtractTextPlugin = require('extract-text-webpack-plugin'),
+      dir               = require('./dir');
 
-const BUNDLE = 'app.js',
-      SRC    = path.join(process.cwd(), 'src'),
-      WEB    = path.join(process.cwd(), 'web');
-
-const CONFIG = {
-    entry  : SRC,
+module.exports = {
+    entry  : dir.src,
+    resolve: {
+        modules: [dir.cwd, dir.deps]
+    },
     output : {
-        path      : WEB,
-        filename  : BUNDLE,
+        path      : dir.web,
+        filename  : 'app.js',
         publicPath: '/'
     },
     plugins: [
-        new ExtractTextPlugin('app.css'),
-        new webpack.optimize.OccurenceOrderPlugin(),
-        new webpack.optimize.UglifyJsPlugin({
-            compressor: {
-                warnings : false,
-                screw_ie8: true
-            }
-        }),
-        new webpack.DefinePlugin({
-            'process.env': {
-                SERVER: JSON.stringify('prod')
-            }
-        })
+      new webpack.optimize.OccurrenceOrderPlugin(),
+      new webpack.optimize.UglifyJsPlugin({
+          compressor: {
+              warnings : false,
+              screw_ie8: true
+          }
+      }),
+      new ExtractTextPlugin('app.css', {
+          allChunks: true
+      })
     ],
     module : {
         loaders: [
             {
-                test   : /\.js$/,
-                loader : 'babel',
-                include: SRC
-            },
-            {
                 test   : /\.html$/,
-                loader : 'html',
-                include: SRC
+                loader : 'html'
             },
             {
                 test   : /\.css$/,
                 loader : ExtractTextPlugin.extract('style-loader', 'css-loader')
+            },
+            {
+                test   : /\.json/,
+                loader : 'json-loader'
             }
         ]
+    },
+    stats: {
+        progress    : true,
+        colors      : true,
+        modules     : true,
+        reasons     : true,
+        errorDetails: true
     }
 };
-
-webpack(CONFIG, info => console.log(info));

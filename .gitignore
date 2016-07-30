@@ -3,10 +3,6 @@ node_modules
 .DS_Store
 .idea
 *.log
-.nyc_output
 /config/local.json
-/coverage
-/web/*
-!/web/.gitkeep
-/logs/*
-!/logs/.gitkeep
+/web/app.js
+/web/app.css

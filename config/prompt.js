@@ -5,15 +5,10 @@ const fs     = require('fs'),
 
 const schema = {
     properties: {
-        port: {
+        PORT: {
             description: 'local site port',
             type       : 'integer',
             default    : 5000
-        },
-        proxyPort: {
-            description: 'webpack proxy port',
-            type       : 'integer',
-            default    : 5001
         }
     }
 };
